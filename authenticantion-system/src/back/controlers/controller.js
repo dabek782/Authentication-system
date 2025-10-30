@@ -1,39 +1,81 @@
 import User from "../models/User.js";
 import jwt from "jsonwebtoken"
-import dotenv from "dotenv"
-dotenv.config({path:'../.env'})
 
-export const register = async (req, res) =>{
+
+export const register = async (req, res) => {
     try {
-        const {email , password , name} = req.body
+        // Extract user data from request body
+        const {email, password, name} = req.body
+        
+        // Check if user already exists in database
         const existingUser = await User.findOne({email})
         if(existingUser){
            return res.status(400).json({message: "User already in db"})
         }
-        const user = await User.create({email , password ,name })
-        const userToken = jwt.sign({id : user._id} , process.env.VITE_JWT_TOKEN , {expiresIn:'2d' })
-        return  res.status(201).json({userToken ,user: {id:user._id , email:user.email, name:user.name }})
+        
+        // Create new user (password will be hashed automatically by pre-save middleware)
+        const user = await User.create({email, password, name})
+        
+        // Generate JWT token valid for 2 days
+        const userToken = jwt.sign(
+            {id: user._id},                    // Payload: user ID
+            process.env.VITE_JWT_TOKEN,        // Secret key
+            {expiresIn: '2d'}                  // Expiration time
+        )
+        
+        // Send success response with token and user info
+        return res.status(201).json({
+            userToken,
+            user: {
+                id: user._id,
+                email: user.email,
+                name: user.name
+            }
+        })
 
     } catch (error) {
-       return res.status(500).json({message:"Internal error" , error:error.message})
+       // Handle any server errors
+       return res.status(500).json({message: "Internal error", error: error.message})
     }
 }
 
-export const login = async(req , res)=>{
+
+export const login = async(req, res) => {
     try{
-        const  {email , password , name} = req.body
-        const user = User.findOne({email})
+        // Extract login credentials from request body
+        const {email, password} = req.body
+        
+        // Find user by email (MUST use await!)
+        const user = await User.findOne({email})
         if(!user){
-           return res.status(401).json({message:"Did not find user with that email"})
+           return res.status(401).json({message: "Invalid credentials"})
         }
+        
+        // Compare provided password with hashed password in database
         const isMatching = await user.isValidPassword(password)
         if(!isMatching){
-           return res.status(401).json({message:"Wrong Credentials"})
+           return res.status(401).json({message: "Invalid credentials"})
         }
-        const token = jwt.sign({id:user._id} , process.env.VITE_JWT_TOKEN , {expiresIn:'2d'})
-        return res.status(200).json({token , user:{id:user._id , email: user.email , name : user.name}})
+        
+        // Generate JWT token valid for 2 days
+        const token = jwt.sign(
+            {id: user._id},                    // Payload: user ID
+            process.env.VITE_JWT_TOKEN,        // Secret key
+            {expiresIn: '2d'}                  // Expiration time
+        )
+        
+        // Send success response with token and user info
+        return res.status(200).json({
+            token,
+            user: {
+                id: user._id,
+                email: user.email,
+                name: user.name
+            }
+        })
     }
     catch(error){
-      return  res.status(500).json({message:"Internal Problem", error:error.message})
+      // Handle any server errors
+      return res.status(500).json({message: "Internal Problem", error: error.message})
     }
 }

@@ -1,10 +1,16 @@
-import express, { Router } from 'express'
-import { login , register } from '../controlers/controller.js'
-const app = express()
+import express from 'express'
+import { login, register } from '../controlers/controller.js'
 
+/**
+ * Authentication Routes
+ * Handles user registration and login endpoints
+ */
 const router = express.Router()
  
+// POST /api/v1/auth/register - Register new user
 router.post('/register', register)
-router.post('/login' , login)
+
+// POST /api/v1/auth/login - Login existing user
+router.post('/login', login)
 
 export default router
