@@ -1,16 +1,61 @@
-# React + Vite
+# Authentication System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Full-stack authentication with user registration and login using JWT tokens.
 
-Currently, two official plugins are available:
+## What it does
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- User registration and login
+- JWT token authentication
+- Password hashing with bcrypt
+- MongoDB database
 
-## React Compiler
+## Packages Used
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+**Backend:**
+- Express - Web framework
+- Mongoose - MongoDB ODM
+- bcryptjs - Password hashing
+- jsonwebtoken - JWT authentication
+- dotenv - Environment variables
+- cors - Cross-origin requests
 
-## Expanding the ESLint configuration
+**Frontend:**
+- React - UI library
+- Vite - Build tool
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Setup
+
+1. Install dependencies:
+```bash
+npm install
+```
+
+2. Create `.env` in `src/back/`:
+```env
+VITE_MongoDB_URI=your_mongodb_connection_string
+VITE_Port=3000
+VITE_JWT_TOKEN=your_secret_key
+```
+
+3. Start backend:
+```bash
+node src/back/index.js
+```
+
+4. Start frontend:
+```bash
+npm run dev
+```
+
+## API Endpoints
+
+**POST** `/api/v1/auth/register` - Register new user  
+**POST** `/api/v1/auth/login` - Login user
+
+## 🤝 Contributing
+
+Feel free to submit issues and pull requests.
+
+## 📄 License
+
+MIT License - Open source
