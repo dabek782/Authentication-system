@@ -1,8 +1,8 @@
 import User from "../models/User.js";
 import jwt from "jsonwebtoken"
 import bcrypt from "bcryptjs";
-
-
+import dotenv from "dotenv"
+dotenv.config({path:"../.env"})
 export const register = async (req, res) => {
     try {
         // Extract user data from request body
@@ -46,7 +46,7 @@ export const login = async(req, res) => {
         // Extract login credentials from request body
         const {email, password} = req.body
         
-        // Find user by email (MUST use await!)
+        // Find user by email
         const user = await User.findOne({email})
         if(!user){
            return res.status(401).json({message: "Invalid credentials"})
